@@ -1,10 +1,14 @@
+import { Toaster } from "@/presentation/components/ui/sonner";
+import { cn } from "@/presentation/lib/utils";
+import "@/presentation/styles/global.css";
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
-import '@/presentation/styles/global.css';
 import type { ReactNode } from "react";
-import { cn } from "@/presentation/lib/utils";
 
-const jetbrainsMono = JetBrains_Mono({subsets:['latin'],variable:'--font-mono'});
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+});
 
 const inter = Inter({
   variable: "--font-inter",
@@ -24,9 +28,18 @@ export default function RootLayout({
   return (
     <html
       lang="pt-BR"
-      className={cn("w-full", "antialiased", inter.variable, "font-mono", jetbrainsMono.variable)}
+      className={cn(
+        "w-full",
+        "antialiased",
+        inter.variable,
+        "font-mono",
+        jetbrainsMono.variable,
+      )}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {children}
+        <Toaster />
+      </body>
     </html>
   );
 }
