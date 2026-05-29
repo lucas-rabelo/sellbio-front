@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
-export function middleware(
+export function proxy(
   request: NextRequest,
 ) {
   const accessToken =

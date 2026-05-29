@@ -13,11 +13,16 @@ import { Button } from "@/presentation/components/ui/button";
 import { PATH } from "../../../constants/path";
 import { InputControlled } from "../components/InputControlled";
 
+import { Spinner } from "@/presentation/components/ui/spinner";
+import { useToast } from "@/presentation/hooks/useToast";
 import { loginFormSchema } from "./schema";
 import type { LoginFormSchemaProps } from "./types";
 
 export function LoginForm() {
+  const toast = useToast();
+
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     control,
@@ -32,25 +37,26 @@ export function LoginForm() {
     },
   });
 
-  const handleLoginSubmit = async ({ email, password }: LoginFormSchemaProps) => {
-    const response =
-      await fetch(
-        "/api/auth/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type":
-              "application/json",
-          },
-          body: JSON.stringify({ email, password }),
-        },
-      );
-
+  const handleLoginSubmit = async ({
+    email,
+    password,
+  }: LoginFormSchemaProps) => {
+    setIsLoading(true);
+    const response = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, password }),
+    });
+    
     if (!response.ok) {
-      console.log("Erro");
+      setIsLoading(false);
+      toast.error("Erro ao fazer login");
       return;
     }
-
+    
+    setIsLoading(false);
     console.log("Logado");
   };
 
@@ -96,10 +102,16 @@ export function LoginForm() {
 
         <Button
           className="cursor-pointer mt-1 h-14 w-full rounded-2xl bg-accent text-md text-accent-foreground hover:bg-accent/90"
-          disabled={!isValid}
+          disabled={!isValid || isLoading}
         >
-          Entrar
-          <ArrowRight className="ml-2 h-4 w-4" />
+          {isLoading ? (
+            <Spinner />
+          ) : (
+            <>
+              Entrar
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </>
+          )}
         </Button>
       </form>
 

@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
-import { login } from "@/presentation/services/api/auth/login.service";
+import { loginService } from "@/presentation/services/api/auth/login.service";
 
 export async function POST(
   request: Request,
@@ -9,7 +9,7 @@ export async function POST(
   try {
     const body = await request.json();
 
-    const response = await login(body);
+    const response = await loginService(body);
 
     const cookieStore =
       await cookies();
@@ -36,7 +36,7 @@ export async function POST(
       },
     );
 
-    return NextResponse.json({ message: "Login successful" });
+    return NextResponse.json({ message: "Login realizado com sucesso" });
   } catch (error: any) {
     return NextResponse.json(
       {

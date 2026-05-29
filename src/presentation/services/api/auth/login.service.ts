@@ -9,7 +9,7 @@ type LoginResponse = {
   refresh_token: string;
 };
 
-export async function login(
+export async function loginService(
   body: LoginDTO,
 ) {
   return api<LoginResponse>(

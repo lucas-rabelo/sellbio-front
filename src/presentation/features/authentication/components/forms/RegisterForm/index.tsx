@@ -20,12 +20,17 @@ import { Button } from "@/presentation/components/ui/button";
 import { DatePickerControlled } from "../components/DatePickerControlled";
 import { InputControlled } from "../components/InputControlled";
 
+import { useToast } from "@/presentation/hooks/useToast";
+import { Spinner } from "@/presentation/components/ui/spinner";
 import { registerFormSchema } from "./schema";
 import type { RegisterFormSchemaProps } from "./types";
 
 export function RegisterForm() {
+  const toast = useToast();
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     control,
@@ -44,8 +49,24 @@ export function RegisterForm() {
     },
   });
 
-  const handleRegisterSubmit = (request: RegisterFormSchemaProps) => {
-    console.log(request);
+  const handleRegisterSubmit = async (request: RegisterFormSchemaProps) => {
+    setIsLoading(true);
+    const response = await fetch("/api/auth/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(request),
+    });
+
+    if (!response.ok) {
+      toast.error("Erro ao cadastrar usuário");
+      setIsLoading(false);
+      return;
+    }
+    
+    setIsLoading(false);
+    console.log("Cadastrado");
   };
 
   return (
@@ -122,11 +143,17 @@ export function RegisterForm() {
         />
 
         <Button
-          className="cursor-pointer flex items-center justify-center gap-2 mt-1 h-14 w-full rounded-2xl bg-accent text-md text-accent-foreground hover:bg-accent/90"
-          disabled={!isValid}
+          className="cursor-pointer mt-1 h-14 w-full rounded-2xl bg-accent text-md text-accent-foreground hover:bg-accent/90"
+          disabled={!isValid || isLoading}
         >
-          Continuar
-          <ArrowRight className="h-4 w-4" />
+          {isLoading ? (
+            <Spinner />
+          ) : (
+            <>
+              Continuar
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </>
+          )}
         </Button>
       </form>
 

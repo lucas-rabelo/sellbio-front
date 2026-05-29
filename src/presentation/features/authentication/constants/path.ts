@@ -1,6 +1,6 @@
 export const PATH = {
-  LOGIN: "/auth/login",
-  REGISTER: "/auth/register",
-  FORGET_PASSWORD: "/auth/forget-password",
-  RESET_PASSWORD: "/auth/reset-password",
+  LOGIN: "/login",
+  REGISTER: "/register",
+  FORGET_PASSWORD: "/forget-password",
+  RESET_PASSWORD: "/reset-password",
 } as const;

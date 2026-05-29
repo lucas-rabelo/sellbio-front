@@ -25,5 +25,6 @@ name: z
     ),
   confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {
+  path: ['confirmPassword'],
   message: 'As senhas não coincidem'
 });

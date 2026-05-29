@@ -1,35 +1,55 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { registerService } from '@/presentation/services/auth.service'
-import { HttpError } from '@/presentation/lib/http-client'
+import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 
-export async function POST(request: NextRequest) {
+import { registerService } from "@/presentation/services/api/auth/register.service";
+
+export async function POST(
+  request: Request,
+) {
   try {
-    const body = await request.json()
-    const { accessToken, refreshToken } = await registerService(body)
+    const body = await request.json();
 
-    const response = NextResponse.json({ accessToken, refreshToken }, { status: 201 })
+    const response = await registerService(body);
 
-    response.cookies.set('access_token', accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      path: '/',
-      maxAge: 60 * 15, // 15 minutos
-    })
+    const cookieStore =
+      await cookies();
 
-    response.cookies.set('refresh_token', refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      path: '/',
-      maxAge: 60 * 60 * 24 * 7, // 7 dias
-    })
+    cookieStore.set(
+      "accessToken",
+      response.access_token,
+      {
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict",
+        path: "/",
+      },
+    );
 
-    return response
-  } catch (error) {
-    if (error instanceof HttpError) {
-      return NextResponse.json({ error: error.message }, { status: error.statusCode })
-    }
-    return NextResponse.json({ error: 'Erro interno.' }, { status: 500 })
+    cookieStore.set(
+      "refreshToken",
+      response.refresh_token,
+      {
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict",
+        path: "/",
+      },
+    );
+
+    return NextResponse.json({ message: "Cadastro realizado com sucesso!" });
+  } catch (error: any) {
+    console.log({error});
+
+    return NextResponse.json(
+      {
+        message:
+          error.message ||
+          "Internal server error",
+      },
+      {
+        status:
+          error.status || 500,
+      },
+    );
   }
 }
