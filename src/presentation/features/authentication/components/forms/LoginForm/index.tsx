@@ -32,8 +32,26 @@ export function LoginForm() {
     },
   });
 
-  const handleLoginSubmit = ({ email, password }: LoginFormSchemaProps) => {
-    console.log({ email, password });
+  const handleLoginSubmit = async ({ email, password }: LoginFormSchemaProps) => {
+    const response =
+      await fetch(
+        "/api/auth/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        },
+      );
+
+    if (!response.ok) {
+      console.log("Erro");
+      return;
+    }
+
+    console.log("Logado");
   };
 
   return (
